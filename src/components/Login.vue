@@ -5,13 +5,18 @@
       <img src="../assets/logo.png">
     </div>
     <div class="form-item">
-      <el-input placeholder="请输入账号" prefix-icon="el-icon-user-solid" class="username_margin"></el-input>
-      <el-input placeholder="请输入密码" prefix-icon="el-icon-message-solid" show-password></el-input>
-      <div class="login-btn">
-        <el-button type="primary">登陆</el-button>
-        <el-button type="info">重置</el-button>
-      </div>
-
+      <el-form ref="loginForm" :rules="rules" :model="loginForm">
+        <el-form-item  prop="username">
+          <el-input v-model="loginForm.username" prefix-icon="el-icon-user-solid"></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input v-model="loginForm.password" prefix-icon="el-icon-message-solid" prop="password"></el-input>
+        </el-form-item>
+        <el-form-item class="login_sub_btn">
+          <el-button type="primary" @click="login">登陆</el-button>
+          <el-button type="info" @click   ="resetLoginForm">重置</el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </div>
@@ -19,7 +24,40 @@
 
 <script>
 export default {
-  name: 'Login'
+  name: 'Login',
+  data () {
+    return {
+      loginForm: {
+        username: '',
+        password: ''
+      },
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 5, max: 16, message: '长度在 5 到 16 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 16, message: '长度在 6 到 16 个字符', trigger: 'blur' }
+        ]
+      }
+    }
+  },
+  methods: {
+    resetLoginForm () {
+      this.$refs.loginForm.resetFields()
+    },
+    login () {
+      this.$refs.loginForm.validate((res) => {
+        if (!res) {
+          alert('请按照表单规则进行填写')
+          return false
+        } else {
+          alert('登陆成功！')
+        }
+      })
+    }
+  }
 }
 </script>
 
@@ -43,11 +81,7 @@ export default {
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        .username_margin{
-          margin-bottom: 20px;
-        }
-        .login-btn{
-          margin-top: 50px;
+        .login_sub_btn{
           display: flex;
           justify-content: flex-end;
         }

@@ -28,8 +28,8 @@ export default {
   data () {
     return {
       loginForm: {
-        username: '',
-        password: ''
+        username: 'admin',
+        password: '123456'
       },
       rules: {
         username: [
@@ -48,12 +48,19 @@ export default {
       this.$refs.loginForm.resetFields()
     },
     login () {
-      this.$refs.loginForm.validate((res) => {
+      this.$refs.loginForm.validate(async (res) => {
         if (!res) {
-          alert('请按照表单规则进行填写')
+          this.$message.warning('请按照表单提示进行填写正确')
           return false
         } else {
-          alert('登陆成功！')
+          const { data } = await this.$http.post('login', this.loginForm)
+          if (data.meta.status === 200) {
+            window.sessionStorage.setItem('token', data.data.token)
+            this.$message.success('登陆成功')
+            this.$router.push('/home')
+          } else {
+            this.$message.error('用户名或密码错误')
+          }
         }
       })
     }
